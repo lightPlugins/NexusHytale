@@ -1,0 +1,34 @@
+# Settings.yml
+
+test: 123
+example: value
+new: test
+map:
+  - id: 5
+    args:
+      - name: test
+        amount: 50
+        permission: test.test1
+      - name: test2
+        amount: 51
+        permission: test.test2
+      - name: test3
+        amount: 52
+        permission: test.test3
+      - name: test4
+        amount: 53
+        permission: test.test4
+  - id: 18
+    args:
+      - name: test
+        amount: 50
+        permission: test.test4
+      - name: test2
+        amount: 51
+        permission: test.test3
+      - name: test3
+        amount: 52
+        permission: test.test2
+      - name: test4
+        amount: 53
+        permission: test.test1
