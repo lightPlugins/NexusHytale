@@ -4,6 +4,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.command.system.CommandManager;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
+import io.nexstudios.hytale.nexus.commands.ExampleCommand;
 import io.nexstudios.hytale.nexus.configs.NexusFile;
 import io.nexstudios.hytale.nexus.configs.NexusFileConfiguration;
 import io.nexstudios.hytale.nexus.configs.NexusFileReader;

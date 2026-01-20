@@ -37,17 +37,17 @@ public final class NexusFileReader {
     /**
      * All discovered YAML files (absolute paths).
      */
-    private List<Path> files;
+    private volatile List<Path> files;
 
     /**
      * Cached loaded configurations in the same order as {@link #files}.
      */
-    private final List<NexusFileConfiguration> nexusFiles;
+    private volatile List<NexusFileConfiguration> nexusFiles;
 
     /**
      * Cached configurations by file name without extension (e.g. "weapons" -> weapons.yml).
      */
-    private final Map<String, NexusFileConfiguration> nexusFileMap;
+    private volatile Map<String, NexusFileConfiguration> nexusFileMap;
 
     /**
      * If true, a file named "_example.yml" will be excluded.
@@ -76,9 +76,9 @@ public final class NexusFileReader {
         this.directoryPath = Objects.requireNonNull(directoryPath, "directoryPath");
         this.excludeExample = excludeExample;
 
-        this.files = new ArrayList<>();
-        this.nexusFiles = new ArrayList<>();
-        this.nexusFileMap = new HashMap<>();
+        this.files = List.of();
+        this.nexusFiles = List.of();
+        this.nexusFileMap = Map.of();
 
         reload();
     }
@@ -86,19 +86,17 @@ public final class NexusFileReader {
     /**
      * Re-scans the directory and reloads all YAML files into cache.
      */
-    public void reload() {
-        loadYmlFiles();
-        readNexusFiles();
+    public synchronized void reload() {
+        List<Path> newFiles = loadYmlFilesSnapshot();
+        Snapshot snapshot = readNexusFilesSnapshot(newFiles);
+
+        this.files = List.copyOf(newFiles);
+        this.nexusFiles = List.copyOf(snapshot.nexusFiles());
+        this.nexusFileMap = Map.copyOf(snapshot.nexusFileMap());
     }
 
-    /**
-     * Finds all YAML files within the configured directory (recursive).
-     *
-     * <p>This method does NOT create YAML files. It only collects their paths.
-     * The directory itself may be created if it doesn't exist, to avoid scan errors.</p>
-     */
-    private void loadYmlFiles() {
-        this.files = new ArrayList<>();
+    private List<Path> loadYmlFilesSnapshot() {
+        List<Path> out = new ArrayList<>();
 
         Path directory = dataDirectory.resolve(directoryPath);
 
@@ -113,7 +111,7 @@ public final class NexusFileReader {
                     if (file.toString().endsWith(".yml")) {
                         String fileName = file.getFileName().toString();
                         if (!(excludeExample && fileName.equalsIgnoreCase("_example.yml"))) {
-                            files.add(file.toAbsolutePath());
+                            out.add(file.toAbsolutePath());
                         }
                     }
                     return FileVisitResult.CONTINUE;
@@ -122,22 +120,23 @@ public final class NexusFileReader {
         } catch (IOException e) {
             throw new RuntimeException("Something went wrong while scanning YAML files in: " + directory, e);
         }
+
+        return out;
     }
 
-    /**
-     * Loads all discovered YAML files into {@link NexusFileConfiguration} objects and caches them.
-     *
-     * <p>This method is read-only: it will not write back to disk.</p>
-     */
-    private void readNexusFiles() {
-        nexusFiles.clear();
-        nexusFileMap.clear();
+    private record Snapshot(List<NexusFileConfiguration> nexusFiles, Map<String, NexusFileConfiguration> nexusFileMap) {}
 
-        for (Path file : files) {
+    private Snapshot readNexusFilesSnapshot(List<Path> filesSnapshot) {
+        List<NexusFileConfiguration> newNexusFiles = new ArrayList<>(filesSnapshot.size());
+        Map<String, NexusFileConfiguration> newNexusFileMap = new HashMap<>(Math.max(16, filesSnapshot.size() * 2));
+
+        for (Path file : filesSnapshot) {
             NexusFileConfiguration cfg = loadSingle(file);
-            nexusFiles.add(cfg);
-            nexusFileMap.put(getFileNameWithoutExtension(file), cfg);
+            newNexusFiles.add(cfg);
+            newNexusFileMap.put(getFileNameWithoutExtension(file), cfg);
         }
+
+        return new Snapshot(newNexusFiles, newNexusFileMap);
     }
 
     /**

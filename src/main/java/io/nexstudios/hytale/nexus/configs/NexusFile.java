@@ -113,8 +113,11 @@ public final class NexusFile {
      * @return the current NexusFileConfiguration instance
      */
     public NexusFileConfiguration getConfig() {
-        ensureLoaded();
-        return config;
+        NexusFileConfiguration snapshot = config;
+        if (snapshot == null) {
+            throw new IllegalStateException("Config ist nicht geladen. Erst reload() aufrufen.");
+        }
+        return snapshot;
     }
 
     /**
@@ -178,6 +181,7 @@ public final class NexusFile {
                 diskLoader.save(serverRoot);
             }
 
+            // Snapshot bauen und am Ende atomar publishen
             this.config = new NexusFileConfiguration(filePath, diskLoader, serverRoot);
         } catch (Exception e) {
             throw new RuntimeException("Konnte Config nicht reloaden: " + filePath, e);
@@ -194,9 +198,12 @@ public final class NexusFile {
      * @throws IllegalStateException if the configuration is not loaded
      * @throws RuntimeException if an error occurs while saving the configuration
      */
-    public void save() {
-        ensureLoaded();
-        config.save();
+    public synchronized void save() {
+        NexusFileConfiguration snapshot = config;
+        if (snapshot == null) {
+            throw new IllegalStateException("Config ist nicht geladen. Erst reload() aufrufen.");
+        }
+        snapshot.save();
     }
 
     /**
