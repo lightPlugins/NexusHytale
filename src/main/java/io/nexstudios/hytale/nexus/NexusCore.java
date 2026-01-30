@@ -8,18 +8,25 @@ import io.nexstudios.hytale.nexus.commands.ExampleCommand;
 import io.nexstudios.hytale.nexus.configs.NexusFile;
 import io.nexstudios.hytale.nexus.configs.NexusFileConfiguration;
 import io.nexstudios.hytale.nexus.configs.NexusFileReader;
+import io.nexstudios.hytale.nexus.rpg.NexRPG;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
+@Getter
 public class NexusCore extends JavaPlugin {
 
     private static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
+    @Getter
+    private static NexusCore instance;
 
     private NexusFile settings;
     private NexusFileReader items;
+    private NexRPG rpg;
 
     public NexusCore(@Nonnull JavaPluginInit init) {
         super(init);
+        instance = this;
         LOGGER.atInfo().log("Loading NexusCore ... " + getDataDirectory().toAbsolutePath());
         LOGGER.atInfo().log("Initializing Configs ...");
 
@@ -34,6 +41,9 @@ public class NexusCore extends JavaPlugin {
             LOGGER.atInfo().log("Processing Item File: " + config.getFileName());
         }
 
+        rpg = new NexRPG();
+        rpg.init();
+
 
     }
 
@@ -41,6 +51,8 @@ public class NexusCore extends JavaPlugin {
     protected void setup() {
         LOGGER.atInfo().log("Register Commands ...");
         registerCommands();
+
+        rpg.setup();
     }
 
 
