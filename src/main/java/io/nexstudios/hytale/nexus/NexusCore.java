@@ -44,7 +44,6 @@ public class NexusCore extends JavaPlugin {
         rpg = new NexRPG();
         rpg.init();
 
-
     }
 
     @Override

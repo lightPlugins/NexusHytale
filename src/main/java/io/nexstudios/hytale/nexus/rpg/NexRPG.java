@@ -17,7 +17,6 @@ public class NexRPG {
 
     private static NexRPG instance;
 
-
     public void init() {
         instance = this;
     }
@@ -27,8 +26,6 @@ public class NexRPG {
         NexusCore.getInstance().getLogger().atInfo().log("Register NexRPG ...");
 
         var registry = NexusCore.getInstance().getEntityStoreRegistry();
-        var eventRegistry = NexusCore.getInstance().getEventRegistry();
-        var commandRegistry = NexusCore.getInstance().getCommandRegistry();
 
         var rpgType = registry.registerComponent(
                 PlayerRPGComponent.class,
@@ -38,13 +35,16 @@ public class NexRPG {
 
         PlayerRPGComponent.setComponentType(rpgType);
 
-        // Order doesn't matter for independent systems. Hytale manages execution based on system types
-        registry.registerSystem(new PlayerJoinSystem());
+        // Order doesn't matter for independent systems. Hytale manages execution based on system types+
+        // We NEED the Dependency from the systems in the manifest.json!!!
         registry.registerSystem(new XPGainSystem());
+        registry.registerSystem(new PlayerJoinSystem());
 
+        var eventRegistry = NexusCore.getInstance().getEventRegistry();
         eventRegistry.register(GiveXPEvent.class, new GiveXPHandler());
         eventRegistry.register(LevelUpEvent.class, new LevelUpHandler());
 
+        var commandRegistry = NexusCore.getInstance().getCommandRegistry();
         commandRegistry.registerCommand(new RPGCommand());
 
 

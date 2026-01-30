@@ -13,7 +13,6 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import io.nexstudios.hytale.nexus.rpg.components.PlayerRPGComponent;
 import io.nexstudios.hytale.nexus.rpg.events.GiveXPEvent;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
@@ -21,10 +20,13 @@ public class XPGainSystem extends DeathSystems.OnDeathSystem {
 
     private static final long XP_PER_KILL = 50;
 
-    @Nullable
     @Override
     public Query<EntityStore> getQuery() {
-        return Archetype.of(PlayerRef.getComponentType());
+        // We NEED the Dependency from the systems in the manifest.json!!!
+        // "Dependencies": {
+        //     "Hytale:DamageModule": "*"
+        // },
+        return Archetype.of(DeathComponent.getComponentType());
     }
 
     @Override
