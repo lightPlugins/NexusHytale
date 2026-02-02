@@ -1,6 +1,7 @@
 package io.nexstudios.hytale.nexus.rpg;
 
 import io.nexstudios.hytale.nexus.NexusCore;
+import io.nexstudios.hytale.nexus.rpg.commands.OpenLevelOverview;
 import io.nexstudios.hytale.nexus.rpg.commands.RPGCommand;
 import io.nexstudios.hytale.nexus.rpg.components.PlayerRPGComponent;
 import io.nexstudios.hytale.nexus.rpg.events.GiveXPEvent;
@@ -46,6 +47,7 @@ public class NexRPG {
 
         var commandRegistry = NexusCore.getInstance().getCommandRegistry();
         commandRegistry.registerCommand(new RPGCommand());
+        commandRegistry.registerCommand(new OpenLevelOverview());
 
 
 

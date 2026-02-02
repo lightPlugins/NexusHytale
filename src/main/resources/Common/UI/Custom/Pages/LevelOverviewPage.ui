@@ -1,0 +1,97 @@
+$C = "../Common.ui";
+
+$C.@PageOverlay {
+
+  $C.@DecoratedContainer {
+    Anchor: (Width: 1050, Height: 700);
+
+    #Title {
+      $C.@Title #Header {
+        @Text = "init";
+      }
+    }
+
+    Group #RightPanel {
+      FlexWeight: 1;
+      LayoutMode: Top;
+      Padding: (Full: 20);
+
+      Group { Anchor: (Height: 40); }
+
+      Group {
+        Anchor: (Height: 1);
+        Background: #2b3542;
+      }
+
+      Group { Anchor: (Height: 16); }
+
+      Label {
+        Text: "Dynamic values set from Java:";
+        Anchor: (Height: 25);
+        Style: (FontSize: 13, TextColor: #6e7da1);
+      }
+
+      Group { Anchor: (Height: 8); }
+
+
+      Group #StatsGrid {
+        LayoutMode: Left;
+        Anchor: (Height: 70);
+
+        Group {
+          FlexWeight: 1;
+          LayoutMode: Top;
+
+          Label #Stat1Value {
+            Text: "0";
+            Anchor: (Height: 32);
+            Style: (FontSize: 30, TextColor: #4a9eff, RenderBold: true, Alignment: Center);
+          }
+          Label {
+            Text: "Players";
+            Anchor: (Height: 18);
+            Style: (FontSize: 15, TextColor: #6e7da1, Alignment: Center);
+          }
+        }
+
+        Group {
+          FlexWeight: 1;
+          LayoutMode: Top;
+
+          Label #Stat2Value {
+            Text: "0";
+            Anchor: (Height: 32);
+            Style: (FontSize: 30, TextColor: #4aff7f, RenderBold: true, Alignment: Center);
+          }
+          Label {
+            Text: "Quests";
+            Anchor: (Height: 18);
+            Style: (FontSize: 15, TextColor: #6e7da1, Alignment: Center);
+          }
+        }
+
+        Group {
+          FlexWeight: 1;
+          LayoutMode: Top;
+
+          Label #Stat3Value {
+            Text: "0";
+            Anchor: (Height: 32);
+            Style: (FontSize: 30, TextColor: #ffaa4a, RenderBold: true, Alignment: Center);
+          }
+          Label {
+            Text: "Uptime";
+            Anchor: (Height: 18);
+            Style: (FontSize: 15, TextColor: #6e7da1, Alignment: Center);
+          }
+        }
+      }
+
+    }
+  }
+}
+
+$C.@BackButton {}
+
+
+
